@@ -1,0 +1,10 @@
+config.env
+*.local
+*.log
+*.tmp
+*.bak.*
+backup/
+*.parts/
+.tools/
+.DS_Store
+Thumbs.db
