@@ -6,6 +6,11 @@
 Автор доработок и этой публичной версии: `xelsing1991-maker`  
 Репозиторий: <https://github.com/xelsing1991-maker/backup-script>
 
+## VPN для РФ
+
+Реферальная ссылка автора доработок:  
+<https://t.me/VPN_Raketa_bot?start=ZankinMaster>
+
 ## Что было улучшено
 
 - Добавлен бэкап Telegram-ботов вместе с панелью или отдельно от панели.
