@@ -1,4 +1,9 @@
 #!/bin/bash
+#
+# Remnawave Backup & Restore
+# Original project: distillium/remnawave-backup-restore
+# Improvements author: xelsing1991-maker
+# Public repository: https://github.com/xelsing1991-maker/backup-script
 
 set -e
 
@@ -13,7 +18,7 @@ S3_RETAIN_DAYS=30
 BACKUP_INTERVAL_HOURS=""
 SYMLINK_PATH="/usr/local/bin/rw-backup"
 REMNALABS_ROOT_DIR=""
-SCRIPT_REPO_URL="https://raw.githubusercontent.com/distillium/remnawave-backup-restore/main/backup-restore.sh"
+SCRIPT_REPO_URL="https://raw.githubusercontent.com/xelsing1991-maker/backup-script/main/backup-restore.sh"
 SCRIPT_RUN_PATH="$(realpath "$0")"
 GD_CLIENT_ID=""
 GD_CLIENT_SECRET=""
