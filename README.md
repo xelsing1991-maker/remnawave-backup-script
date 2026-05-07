@@ -1,159 +1,194 @@
-# Remnawave Backup & Restore
+# 🚀 Remnawave Backup & Restore
 
-Расширенный Bash-скрипт для резервного копирования и восстановления Remnawave с отправкой архивов в Telegram, Google Drive или S3-совместимое хранилище.
+> Полноценный скрипт для бэкапа и восстановления Remnawave с отправкой в Telegram, Google Drive, S3 и поддержкой больших архивов частями.
 
-Оригинальная основа: `distillium/remnawave-backup-restore`  
-Автор доработок и этой публичной версии: `xelsing1991-maker`  
-Репозиторий: <https://github.com/xelsing1991-maker/backup-script>
+🌐 **Репозиторий:** <https://github.com/xelsing1991-maker/backup-script>  
+👤 **Автор доработок:** `xelsing1991-maker`  
+🧩 **Основа:** `distillium/remnawave-backup-restore`  
+🇷🇺 **VPN для РФ:** <https://t.me/VPN_Raketa_bot?start=ZankinMaster>
 
-## VPN для РФ
+---
 
-Реферальная ссылка автора доработок:  
-<https://t.me/VPN_Raketa_bot?start=ZankinMaster>
+## ✨ Что умеет скрипт
 
-## Что было улучшено
+✅ Создает бэкап Remnawave панели  
+✅ Восстанавливает Remnawave из архива  
+✅ Бэкапит PostgreSQL из Docker или внешней БД  
+✅ Бэкапит директорию панели  
+✅ Бэкапит Telegram-ботов  
+✅ Работает в режимах `Панель`, `Панель + Бот`, `Только Бот`  
+✅ Отправляет бэкапы в Telegram  
+✅ Делит большие архивы на части по `38 MB` для Telegram  
+✅ После отправки частей присылает ссылки/ID и инструкцию сборки в Windows  
+✅ Добавляет IP сервера в Telegram-сообщение  
+✅ Загружает архивы в Google Drive  
+✅ Загружает архивы в S3 Storage  
+✅ Умеет восстанавливать из S3  
+✅ Делает авто-бэкапы через cron  
+✅ Имеет отдельный интервальный режим `1/3/6/12 часов`  
+✅ Чистит старые архивы только в своей папке бэкапов  
+✅ Поддерживает русский и английский интерфейс  
 
-- Добавлен бэкап Telegram-ботов вместе с панелью или отдельно от панели.
-- Добавлена отправка больших Telegram-архивов частями по `38 MB`.
-- После отправки частей скрипт присылает отдельное сообщение со ссылками/ID частей и инструкцией сборки в Windows.
-- В Telegram-сообщения добавлен IP сервера, с которого сделан бэкап.
-- Добавлен отдельный пункт меню для интервального бэкапа: раз в `1`, `3`, `6` или `12` часов.
-- Для интервального режима старые локальные архивы удаляются перед созданием нового архива, когда они прожили выбранный интервал.
-- Улучшена локальная политика хранения: очистка работает по точному времени, а не по округленному `find -mtime`.
-- Очистка ограничена папкой бэкапов скрипта и не удаляет файлы в чужих директориях.
-- Реальный `config.env` исключен из git, добавлен безопасный `config.env.example`.
-- Добавлены `.gitignore` и `.gitattributes`, чтобы секреты не попадали в репозиторий, а `.sh` файлы сохраняли Linux LF-переносы.
+---
 
-## Возможности
+## 📦 Быстрая установка с GitHub
 
-- Создание полного бэкапа Remnawave.
-- Восстановление Remnawave из локального архива.
-- Поддержка Docker PostgreSQL и внешнего PostgreSQL.
-- Бэкап директории панели.
-- Бэкап базы и директории Telegram-бота.
-- Режимы: только панель, панель + бот, только бот.
-- Отправка в Telegram.
-- Автоматическое разбиение большого Telegram-архива на части.
-- Отправка в Google Drive.
-- Отправка в S3 Storage.
-- Загрузка и восстановление из S3.
-- Настройка cron-автоотправки.
-- Отдельная настройка интервального бэкапа.
-- Русский и английский интерфейс.
-
-## Требования
-
-На сервере должны быть:
-
-- Linux-сервер с root-доступом.
-- `bash`
-- `curl`
-- `tar`
-- `gzip`
-- `jq`
-- `docker` и `docker compose`, если Remnawave работает в Docker.
-- `crontab`, если нужен автоматический запуск.
-- `aws`, если используется S3 Storage.
-
-Скрипт сам пытается установить `jq` и AWS CLI в некоторых сценариях, но надежнее заранее проверить зависимости.
-
-## Быстрая установка
-
-Скачайте скрипт:
+Подключитесь к серверу по SSH и выполните:
 
 ```bash
 sudo mkdir -p /opt/rw-backup-restore
 sudo curl -fsSL https://raw.githubusercontent.com/xelsing1991-maker/backup-script/main/backup-restore.sh -o /opt/rw-backup-restore/backup-restore.sh
-sudo chmod +x /opt/rw-backup-restore/backup-restore.sh
-```
-
-Создайте конфиг из примера:
-
-```bash
 sudo curl -fsSL https://raw.githubusercontent.com/xelsing1991-maker/backup-script/main/config.env.example -o /opt/rw-backup-restore/config.env
+sudo mkdir -p /opt/rw-backup-restore/translations
+sudo curl -fsSL https://raw.githubusercontent.com/xelsing1991-maker/backup-script/main/translations/ru.sh -o /opt/rw-backup-restore/translations/ru.sh
+sudo curl -fsSL https://raw.githubusercontent.com/xelsing1991-maker/backup-script/main/translations/en.sh -o /opt/rw-backup-restore/translations/en.sh
+sudo chmod +x /opt/rw-backup-restore/backup-restore.sh
 sudo chmod 600 /opt/rw-backup-restore/config.env
-```
-
-Запустите:
-
-```bash
 sudo /opt/rw-backup-restore/backup-restore.sh
 ```
 
-После первого запуска скрипт может создать быстрый запуск:
+После запуска скрипт может создать короткую команду:
 
 ```bash
-rw-backup
+sudo rw-backup
 ```
 
-## Установка через git
+---
+
+## 🧬 Установка через `git clone`
+
+Если хотите установить именно из git-репозитория:
 
 ```bash
 git clone https://github.com/xelsing1991-maker/backup-script.git
 cd backup-script
+
 sudo mkdir -p /opt/rw-backup-restore
 sudo cp backup-restore.sh /opt/rw-backup-restore/backup-restore.sh
 sudo cp config.env.example /opt/rw-backup-restore/config.env
 sudo cp -r translations /opt/rw-backup-restore/translations
+
 sudo chmod +x /opt/rw-backup-restore/backup-restore.sh
 sudo chmod 600 /opt/rw-backup-restore/config.env
+
 sudo /opt/rw-backup-restore/backup-restore.sh
 ```
 
-## Настройка Telegram
+---
 
-1. Создайте бота через `@BotFather`.
-2. Получите `BOT_TOKEN`.
-3. Получите свой `CHAT_ID` или ID группы.
-4. В меню скрипта откройте настройку способа отправки или Telegram-настройки.
-5. Укажите токен, chat ID и при необходимости `message_thread_id` для темы группы.
+## 🔧 Требования
 
-В конфиге это выглядит так:
+На сервере нужны:
+
+```text
+bash
+curl
+tar
+gzip
+jq
+docker
+docker compose
+crontab
+```
+
+Для S3 дополнительно нужен:
+
+```text
+aws cli
+```
+
+Скрипт умеет помогать с установкой некоторых зависимостей, но лучше заранее запускать его на сервере с root-доступом.
+
+---
+
+## 🧭 Главное меню
+
+После запуска вы увидите меню:
+
+```text
+1. Создать бэкап вручную
+2. Восстановить из бэкапа
+
+3. Настройка бэкапа Telegram бота
+4. Настройка автоматической отправки и уведомлений
+5. Интервальный бэкап и хранение
+6. Настройка способа отправки
+7. Настройка конфигурации
+
+8. Обновление скрипта
+9. Удаление скрипта
+```
+
+---
+
+## 🤖 Настройка Telegram
+
+1. Откройте `@BotFather`.
+2. Создайте бота.
+3. Получите `BOT_TOKEN`.
+4. Получите `CHAT_ID` пользователя или группы.
+5. В меню выберите настройку способа отправки или Telegram-настройки.
+6. Укажите токен и ID чата.
+
+Пример конфига:
 
 ```env
-BOT_TOKEN="123456789:token"
+BOT_TOKEN="123456789:your_token"
 CHAT_ID="123456789"
 UPLOAD_METHOD="telegram"
 TG_MESSAGE_THREAD_ID=""
 TG_PROXY=""
 ```
 
-`config.env` не должен попадать в git. Он уже добавлен в `.gitignore`.
+Если отправляете в тему группы, укажите:
 
-## Большие архивы Telegram
+```env
+TG_MESSAGE_THREAD_ID="123"
+```
 
-Telegram Bot API может не принять большой архив одним файлом. Поэтому скрипт делает так:
+---
 
-1. Создает финальный архив `remnawave_backup_YYYY-MM-DD_HH_MM_SS.tar.gz`.
-2. Если файл больше `38 MB`, режет его на части:
+## 🧱 Большие архивы в Telegram
+
+Telegram может не принять большой `.tar.gz` архив одним файлом. Поэтому скрипт автоматически:
+
+1. Проверяет размер архива.
+2. Если архив больше `38 MB`, режет его на части.
+3. Отправляет каждую часть отдельным документом.
+4. После отправки присылает отдельное сообщение с:
+   - количеством частей;
+   - ссылками или `message_id`;
+   - инструкцией сборки для Windows.
+
+Пример частей:
 
 ```text
-remnawave_backup_....tar.gz.part-000
-remnawave_backup_....tar.gz.part-001
-remnawave_backup_....tar.gz.part-002
+remnawave_backup_2026-05-07_12_00_00.tar.gz.part-000
+remnawave_backup_2026-05-07_12_00_00.tar.gz.part-001
+remnawave_backup_2026-05-07_12_00_00.tar.gz.part-002
 ```
 
-3. Отправляет каждую часть отдельным документом.
-4. После успешной отправки удаляет временную папку `.parts`.
-5. Присылает отдельное сообщение с ссылками/ID частей и инструкцией для Windows.
+### 🪟 Как собрать архив в Windows
 
-### Как собрать части в Windows
+Скачайте все части в одну папку.
 
-Скачайте все части в одну папку, откройте PowerShell в этой папке и выполните:
+Откройте PowerShell в этой папке и выполните:
 
 ```powershell
-cmd /c copy /b remnawave_backup_....tar.gz.part-* remnawave_backup_....tar.gz
+cmd /c copy /b remnawave_backup_2026-05-07_12_00_00.tar.gz.part-* remnawave_backup_2026-05-07_12_00_00.tar.gz
 ```
 
-Затем распакуйте архив через `7-Zip`, `WinRAR` или:
+Потом распакуйте архив через `7-Zip`, `WinRAR` или:
 
 ```powershell
-tar -xzf remnawave_backup_....tar.gz
+tar -xzf remnawave_backup_2026-05-07_12_00_00.tar.gz
 ```
 
-## Интервальный бэкап
+---
 
-В главном меню есть отдельный пункт:
+## ⏱️ Интервальный бэкап 1/3/6/12 часов
+
+В меню есть отдельный пункт:
 
 ```text
 Интервальный бэкап и хранение
@@ -161,63 +196,82 @@ tar -xzf remnawave_backup_....tar.gz
 
 Можно выбрать:
 
-- раз в `1 час`
-- раз в `3 часа`
-- раз в `6 часов`
-- раз в `12 часов`
+```text
+1 час
+3 часа
+6 часов
+12 часов
+```
 
-Логика работы:
+Логика:
 
 1. Cron запускает скрипт по выбранному интервалу.
-2. Перед созданием нового бэкапа скрипт чистит старые локальные архивы, которые прожили выбранный интервал.
-3. Затем создается новый архив.
-4. Новый архив отправляется выбранным способом.
+2. Перед новым бэкапом скрипт удаляет старые локальные архивы, которые прожили этот интервал.
+3. Затем создает новый архив.
+4. Затем отправляет новый архив выбранным способом.
 
-Например, если выбран интервал `3 часа`, то перед новым запуском удаляются локальные архивы старше 3 часов, после чего создается и отправляется новый архив.
+Например:
 
-Удаление ограничено только папкой бэкапов скрипта:
+```text
+Выбрано: раз в 3 часа
+Архив хранится локально 3 часа
+Перед следующим запуском старый архив удаляется
+Создается и отправляется новый архив
+```
+
+Скрипт удаляет только внутри своей папки:
 
 ```bash
 /opt/rw-backup-restore/backup
 ```
 
-Скрипт удаляет только:
+И только файлы:
 
 ```text
 remnawave_backup_*.tar.gz
 remnawave_backup_*.tar.gz.parts
 ```
 
-Он не удаляет файлы панели, директорию Remnawave или другие папки сервера.
+Он не трогает другие папки сервера.
 
-## Обычная политика хранения
+---
 
-Кроме интервального режима есть отдельная политика хранения в днях:
+## 🧹 Политика хранения
+
+В обычном режиме можно задать хранение в днях:
 
 ```env
 RETAIN_BACKUPS_DAYS="7"
 S3_RETAIN_DAYS="30"
 ```
 
-Локальная политика хранения чистит старые архивы в папке бэкапов скрипта. S3-политика чистит старые архивы в указанном S3 bucket/prefix.
+Локальная очистка работает только в папке бэкапов скрипта.
 
-## Настройка Telegram-бота для бэкапа
+---
 
-В меню есть пункт настройки бэкапа Telegram-бота. Скрипт умеет бэкапить:
+## 🤖 Бэкап Telegram-бота
 
-- Бот от Иисуса: `remnawave-telegram-shop`
-- Приватный бот от Иисуса: `rwp-shop`
-- Бот от Мачки: `remnawave-tg-shop`
-- Бот от Snoups: `remnashop`
-- кастомный путь
+Скрипт умеет сохранять Telegram-ботов:
 
-Можно выбрать режим:
+```text
+remnawave-telegram-shop
+rwp-shop
+remnawave-tg-shop
+remnashop
+кастомный путь
+```
 
-- панель + бот
-- только бот
-- только панель
+Поддерживаются режимы:
 
-## Google Drive
+```text
+Панель + Бот
+Только Бот
+Только Панель
+```
+
+---
+
+## ☁️ Google Drive
 
 Для Google Drive нужны:
 
@@ -228,9 +282,11 @@ GD_REFRESH_TOKEN=""
 GD_FOLDER_ID=""
 ```
 
-Настройку удобнее делать через меню скрипта, потому что нужно пройти OAuth-авторизацию и получить refresh token.
+Настраивайте через меню, потому что нужно пройти OAuth-авторизацию и получить refresh token.
 
-## S3 Storage
+---
+
+## 🪣 S3 Storage
 
 Для S3 нужны:
 
@@ -244,9 +300,11 @@ S3_PREFIX=""
 S3_RETAIN_DAYS="30"
 ```
 
-Поддерживаются S3-совместимые хранилища. Для работы нужен AWS CLI.
+Поддерживаются S3-совместимые хранилища.
 
-## Команды
+---
+
+## ▶️ Команды запуска
 
 Интерактивное меню:
 
@@ -272,54 +330,92 @@ sudo /opt/rw-backup-restore/backup-restore.sh restore
 sudo /opt/rw-backup-restore/backup-restore.sh update
 ```
 
-Если создан symlink:
+Если создана команда `rw-backup`:
 
 ```bash
 sudo rw-backup
 sudo rw-backup backup
 sudo rw-backup restore
+sudo rw-backup update
 ```
 
-## Структура репозитория
+---
+
+## 🗂️ Структура репозитория
 
 ```text
 backup-restore.sh       основной скрипт
 config.env.example      пример конфига без секретов
-translations/ru.sh      русские переводы
-translations/en.sh      английские переводы
+translations/ru.sh      русский интерфейс
+translations/en.sh      английский интерфейс
 .gitignore              исключает config.env и временные файлы
-.gitattributes          фиксирует LF для shell-файлов
+.gitattributes          сохраняет LF для shell-файлов
 README.md               документация
 ```
 
-## Безопасность
+---
 
-- Не публикуйте `config.env`.
-- Не коммитьте токены Telegram, пароли БД, S3 ключи и OAuth refresh token.
-- После случайной публикации токена сразу перевыпустите его.
-- Реальный `config.env` уже исключен из git.
+## 🔐 Важно про безопасность
 
-## Разработка и Pull Requests
+Никогда не публикуйте:
 
-Для работы с репозиторием:
+```text
+config.env
+BOT_TOKEN
+CHAT_ID
+DB_PASSWORD
+GD_REFRESH_TOKEN
+S3_ACCESS_KEY
+S3_SECRET_KEY
+```
+
+В репозитории есть только безопасный:
+
+```text
+config.env.example
+```
+
+Реальный файл:
+
+```text
+config.env
+```
+
+добавлен в `.gitignore`.
+
+---
+
+## 🛠️ Разработка и Pull Requests
+
+Клонировать репозиторий:
 
 ```bash
 git clone https://github.com/xelsing1991-maker/backup-script.git
 cd backup-script
+```
+
+Создать ветку:
+
+```bash
 git checkout -b feature/my-change
 ```
 
-Проверка синтаксиса:
+Проверить синтаксис:
 
 ```bash
 bash -n backup-restore.sh
 ```
 
-Коммит и push:
+Сделать коммит:
 
 ```bash
 git add .
 git commit -m "Describe change"
+```
+
+Запушить ветку:
+
+```bash
 git push -u origin feature/my-change
 ```
 
@@ -329,9 +425,14 @@ git push -u origin feature/my-change
 gh pr create --fill
 ```
 
-## Что проверено
+---
 
-- `config.env` игнорируется git.
-- В репозиторий добавлен только безопасный `config.env.example`.
-- `backup-restore.sh` проходит `bash -n`.
-- Репозиторий опубликован как публичный.
+## ✅ Проверено
+
+```text
+config.env не попадает в git
+backup-restore.sh проходит bash -n
+репозиторий публичный
+ветка main
+установка доступна с GitHub
+```
