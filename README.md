@@ -1,7 +1,10 @@
-# 🚀 Remnawave Backup & Restore
+# 🚀 Remnawave Backup Script
 
-> Полноценный скрипт для бэкапа и восстановления Remnawave с отправкой в Telegram, Google Drive, S3 и поддержкой больших архивов частями.
+> **Remnawave Backup Script** — полноценный скрипт бэкапа и восстановления Remnawave с отправкой в Telegram, Google Drive, S3 и поддержкой больших архивов частями.
 
+📌 **Название проекта:** `Remnawave Backup Script`  
+📌 **Русское описание:** `Скрипт бэкапа Remnawave`  
+📌 **English description:** `Remnawave backup script`  
 🌐 **Репозиторий:** <https://github.com/xelsing1991-maker/backup-script>  
 👤 **Автор доработок:** `xelsing1991-maker`  
 🧩 **Основа:** `distillium/remnawave-backup-restore`  

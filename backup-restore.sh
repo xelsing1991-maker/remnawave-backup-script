@@ -1,6 +1,8 @@
 #!/bin/bash
 #
-# Remnawave Backup & Restore
+# Remnawave Backup Script
+# RU: Скрипт бэкапа Remnawave
+# EN: Remnawave backup script
 # Original project: distillium/remnawave-backup-restore
 # Improvements author: xelsing1991-maker
 # Public repository: https://github.com/xelsing1991-maker/backup-script
